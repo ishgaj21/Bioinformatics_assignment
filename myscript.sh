@@ -11,21 +11,23 @@
 
 ## Installing required tools for the setup for the analysis
 
-#Setting up the project structure
+          #Setting up the project structure
+          # We make the working directory bioinformatics_assignment and make sub directories data meta results logs
+mkdir bioinformatics_assignment
 cd ~/bioinformatics_assignment
 mkdir data meta results logs
-cd ~/bioinformatics_assignment/data
+cd ~/bioinformatics_assignment/data #moving to the data folder we make more directories for untrimmed and trimmed fastq data 
 mkdir trimmed_fastq
 mkdir untimmed_fastq
 
-## download FASTQ raw read data
+            ## download FASTQ raw read data
 wget https://s3-eu-west-1.amazonaws.com/workshopdata2017/NGS0001.R1.fastq.qz
 wget https://s3-eu-west-1.amazonaws.com/workshopdata2017/NGS0001.R2.fastq.qz
 wget https://s3-eu-west-1.amazonaws.com/workshopdata2017/annotation.bed
 mv *fastq.qz untrimmed_fastq
 mv annotation.bed ~/bioinformatics_assignment/data
 
-
+#we make a reference sub directory to save the reference file to map the data when performing the alignment
 mkdir ../reference
 cd ../reference
 wget http://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/hg19.fa.gz
@@ -60,6 +62,8 @@ conda install trimmomatic
 conda install fastqc
 conda install vcflib
 conda install any_other_tool_you_need
+
+
 # Create a simple README description of the project
 touch README.md
 echo "
@@ -81,7 +85,6 @@ fastqc -t 4 *.fastq.gz
 
 
 mkdir ~/bioinformatics_assignment/results/fastqc_untrimmed_reads
-
 
 mv *fastqc * ~/bioinformatics_assignment/results/fastqc_untrimmed_reads/
 
