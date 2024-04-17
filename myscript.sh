@@ -7,9 +7,9 @@
 #Intial set-up of BAM files,  Post Alignment Q.C. and Filtering and Alignment Statistics
 
 
-# Preliminary steps to make directories:
+                    # Preliminary steps to make directories:
 
-## Installing required tools for the setup for the analysis
+                    ## Installing required tools for the setup for the analysis
 
           #Setting up the project structure
           # We make the working directory bioinformatics_assignment and make sub directories data meta results logs
@@ -20,19 +20,19 @@ cd ~/bioinformatics_assignment/data #moving to the data folder we make more dire
 mkdir trimmed_fastq
 mkdir untimmed_fastq
 
-            ## download FASTQ raw read data
+                      ## download FASTQ raw read data
 wget https://s3-eu-west-1.amazonaws.com/workshopdata2017/NGS0001.R1.fastq.qz
 wget https://s3-eu-west-1.amazonaws.com/workshopdata2017/NGS0001.R2.fastq.qz
 wget https://s3-eu-west-1.amazonaws.com/workshopdata2017/annotation.bed
 mv *fastq.qz untrimmed_fastq
 mv annotation.bed ~/bioinformatics_assignment/data
 
-# Convert .qz FASTQ files to more usable .gz files
+                    # Convert .qz FASTQ files to more usable .gz files
 cd untrimmed_fastq
 mv NGS0001.R1.fastq.qz NGS0001.R1.fastq.gz
 mv NGS0001.R2.fastq.qz NGS0001.R2.fastq.gz
 
-#we make a reference sub directory to save the reference file to map the data when performing the alignment
+          #we make a reference sub directory to save the reference file to map the data when performing the alignment
 mkdir ../reference
 cd ../reference
 wget http://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/hg19.fa.gz
@@ -46,11 +46,8 @@ cd ~/
                 # Installing anaconda and its required packages
 
 wget https://repo.anaconda.com/archive/Anaconda3-2022.10-Linux-x86_64.sh
-
 chmod +x ./Anaconda3-2022.10-Linux-x86_64.sh
-
 bash ./Anaconda3-2022.10-Linux-x86_64.sh
-
 source ~/.bashrc
 
 conda config --add channels defaults
@@ -68,8 +65,7 @@ conda install fastqc
 conda install vcflib
 conda install any_other_tool_you_need
 
-
-# Create a simple README description of the project
+                    # Create a simple README description of the project
 touch README.md
 echo "
 Advanced Bioinformatics Course Assignment 2024\
@@ -82,17 +78,13 @@ alignment, variant discovery and annotation on some raw sequencing data." \
 # sudo apt-get install tree
 tree bioinformatics_assignments #used this to separate data,logs,reference genomes, trimmed and untrimmed fastq data
 
-                ##Navigate to the directory with the fastq files
+                ## Navigate to the directory with the fastq files
 cd ~/bioinformatics_assignment/data/untrimmed_fastq
 
 #
 fastqc -t 4 *.fastq.gz
-
-
 mkdir ~/bioinformatics_assignment/results/fastqc_untrimmed_reads
-
 mv *fastqc * ~/bioinformatics_assignment/results/fastqc_untrimmed_reads/
-
 cd ~/bioinformatics_assignment/results/fastqc_untrimmed_reads/
 
                 # unzipping processed untrimmed reads
@@ -106,15 +98,13 @@ cd ~/bioinformatics_assignment/results/fastqc_untrimmed_reads/
 
         #scp -i <path to .key file on your PC root@<ip address>:~/home/ubuntu/bioinformatics_assignment/data/untrimmed_fastq/*.html ~/Desktop
 
-
-
                 #Trimming the raw sequence using Trimmomatic
 
 cd ~/bioinformatics_assignment/data/untrimmed_fastq
 
-# Performming the read trimming with Trimmomatic on raw sequencing data - to trim away adapters and filter out poor quality score reads
-# Drops reads below 50 bp in length, and trims bases from the end of reads, if below a threshold quality (25).
-# Also removes Illumina adapter sequences.
+          # Performming the read trimming with Trimmomatic on raw sequencing data - to trim away adapters and filter out poor quality score reads
+          # Drops reads below 50 bp in length, and trims bases from the end of reads, if below a threshold quality (25).
+          # Also removes Illumina adapter sequences.
 
 trimmomatic PE  \
 -threads 4 \
@@ -124,48 +114,35 @@ trimmomatic PE  \
   ILLUMINACLIP:/home/ubuntu/anaconda3/pkgs/trimmomatic-0.39-hdfd78af_2/share/trimmomatic-0.39-2/adapters/NexteraPE-PE.fa:2:30:10  \ TRAILING:25 MINLEN:50
 
 
-                #Fastqc analysis *
+                          #Fastqc analysis *
 # run FastQC to generate quality metrics on trimmed reads
-
 fastqc -t 4 /home/ubuntu/bioinformatics_assignment/data/trimmed_fastq/trimmed_data_1P \
         /home/ubuntu/bioinformatics_assignment/data/trimmed_fastq/trimmed_data_2P
-
 mkdir ~/bioinformatics_assignment/results/fastqc_trimmed_reads
-
 mv ~/bioinformatics_assignment/data/trimmed_fastq/*fastqc * ~/bioinformatics_assignment/results/fastqc_trimmed_reads/
 
 
--- Alignment Duplication and Marking--
-
-# Marking the index
+                    # Alignment Duplication and Marking--
+                    # Marking the index
 mkdir -p ~/bioinformatics_assignment/data/reference
-
 mv ~/bioinformatics_assignment/data/hg19.fa.gz ~/bioinformatics_assignment/data/reference/
+bwa index ~/bioinformatics_assignment/data/reference/hg19.fa.gz
 
- bwa index ~/bioinformatics_assignment/data/reference/hg19.fa.gz
 
-
-# Running BWA mem with the RG information
-
+                    # Running BWA mem with the RG information
 mkdir ~/bioinformatics_assignment/data/aligned_data
-
  bwa mem -t 4 -v 1 -R '@RG\tID:HWI-D0011.50.H7AP8ADXX.1.WES01\tSM:WES01\tPL:ILLUMINA\tLB:nextera-wes01-blood\tDT:2017-02-23\tPU:HWI-D00119' -I 250,50  ~/bioinformatics_assignment/data/reference/hg19.fa.gz ~/bi>
 
-
-
-       # Changing directories to aligned_folder
-
+                 # Changing directories to aligned_folder
 cd ~/bioinformatics_assignment/data/aligned_data
-
 
 #Converting sam file to bam format, sort it and generate index using samtools
 
-
 samtools view -h -b NGS0001.sam > NGS0001.bam
-
 samtools sort NGS0001.bam > NGS0001_sorted.bam
 
-#To generate .bai index file!
+
+                    #To generate .bai index file!
 samtools index NGS0001_sorted.bam
 
 
@@ -188,20 +165,17 @@ samtools view -F 1796  -q 20 -o $alignment_dir/NGS0001_sorted_marked_filtered.ba
 
 samtools index $alignment_dir/NGS0001_sorted_marked_filtered.bam # generate index
 
-
-
                 ##Generate Alignment Statistics
-
-
 mkdir $alignment_dir/alignment_stats # make a new directory for these stats
 stats_dir=$alignment_dir/alignment_stats
+
 
                 # Generate flagstats
 samtools flagstats $alignment_dir/NGS0001_sorted_marked_filtered.bam \
   > $stats_dir/flagstats_output.txt
 
                 # view the BAM file in the command line
-# samtools view -h $alignment_dir/NGS0001_sorted_marked_filtered.bam | less
+samtools view -h $alignment_dir/NGS0001_sorted_marked_filtered.bam | less
 
                 # Generate alignment statistics per chromosome with idxstats
 samtools idxstats  $alignment_dir/NGS0001_sorted_marked_filtered.bam \
@@ -219,4 +193,4 @@ bedtools intersect -bed -a NGS0001_sorted_marked_filtered.bam -b $workdir/data/a
   | bedtools coverage -d -a $workdir/data/annotation.bed -b - \
   > $stats_dir/coverageBed_output.txt
 
-rm $alignment_dir/NGS0001_sorted_marked.bam # remove unneeded data to save disk space
+rm $alignment_dir/NGS0001_sorted_marked.bam # remove unwanted data or the data that is not needed to save disk space
