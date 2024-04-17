@@ -16,7 +16,7 @@ cd ~/bioinformatics_assignment/results/fastqc_trimmed_reads/
 ls
 trimmed_data_1P_fastqc.html  trimmed_data_1P_fastqc.zip  trimmed_data_2P_fastqc.html  trimmed_data_2P_fastqc.zip
 
-# We are going to convert to text format the reference (as required bysamtools faidx), index it with samtools faidx, call variants with Freebayes, compress the resulting variant file (VCF) and index the VCF wi>
+# We are going to convert to text format the reference (as required bysamtools faidx), index it with samtools faidx, call variants with Freebayes, compress the resulting variant file (VCF) and index the VCF with tabix:
 
 zcat ~/bioinformatics_assignment/data/reference/hg19.fa.gz > ~/bioinformatics_assignment/data/reference/hg19.fa
 
@@ -36,7 +36,11 @@ vcffilter -f "QUAL > 1 & QUAL / AO > 10 & SAF > 0 & SAR > 0 & RPR > 1 & RPL > 1"
 
 # As we run Freebayes with default parameters, the resulting VCF contains a large number of bad calls. The Freebayes Information Fields we will use for filtering are:
 
-# QUAL=probability that there is a polymorphism at the loci described by the record: 1 - P(locus is homozygous given the data). AO=Alternate allele observations, with partial observations recorded fractionally>
+# QUAL=probability that there is a polymorphism at the loci described by the record: 1 - P(locus is homozygous given the data). 
+#AO=Alternate allele observations, with partial observations recorded fractionally AF=Number of alternate observations on the forward strand SAR=Number of alternate observations on the reverse strand RPL=Reads 
+#Placed Left: number of reads supporting the alternate balanced to the left (5’) of -the alternate allele RPR=Reads 
+#Placed Right: number of reads supporting the alternate balanced to the right (3’) of the alternate allele 
+#What calls do we “know” are poor (w.r.t. freebayes VCF annotations)?
 
 # low-quality calls (QUAL < N)
 # also, maybe QUAL is high but QUAL / AO is low
@@ -50,7 +54,7 @@ vcffilter -f "QUAL > 1 & QUAL / AO > 10 & SAF > 0 & SAR > 0 & RPR > 1 & RPL > 1"
 
 # QUAL > 1 & QUAL / AO > 10 & SAF > 0 & SAR > 0 & RPR > 1 & RPL > 1
 
-# QUAL > 1: removes horrible sites QUAL / AO > 10 : additional contribution of each obs should be 10 log units (~ Q10 per read) SAF > 0 & SAR > 0 : reads on both strands RPR > 1 & RPL > 1 : at least two reads >
+# QUAL > 1: removes horrible sites QUAL / AO > 10 : additional contribution of each obs should be 10 log units (~ Q10 per read) SAF > 0 & SAR > 0 : reads on both strands RPR > 1 & RPL > 1 : at least two reads "balanced" to each side of the site
 
 
 
