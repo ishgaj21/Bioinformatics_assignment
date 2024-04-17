@@ -27,6 +27,11 @@ wget https://s3-eu-west-1.amazonaws.com/workshopdata2017/annotation.bed
 mv *fastq.qz untrimmed_fastq
 mv annotation.bed ~/bioinformatics_assignment/data
 
+# Convert .qz FASTQ files to more usable .gz files
+cd untrimmed_fastq
+mv NGS0001.R1.fastq.qz NGS0001.R1.fastq.gz
+mv NGS0001.R2.fastq.qz NGS0001.R2.fastq.gz
+
 #we make a reference sub directory to save the reference file to map the data when performing the alignment
 mkdir ../reference
 cd ../reference
