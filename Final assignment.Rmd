@@ -1,0 +1,400 @@
+---
+title: "Bioinformatics_assignment"
+author: "m2306450/k23165732"
+date: "2024-04-18"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_knit$set(root.dir = normalizePath("C:/Users/admin00/Downloads"))
+```
+
+# Task 3.1
+```{r}
+sum(5:55)
+```
+
+#Task 3.2
+```{r}
+sumfun <- function(n) 
+{sum(5:n)}
+
+# Using the function to calculate the sum for n = 10, n = 20, and n = 100
+
+sumfun(10)  # This should return sum of integers from 5 to 10
+sumfun(20)  # This should return sum of integers from 5 to 20
+sumfun(100) # This should return sum of integers from 5 to 100
+```
+#Task 3.3
+```{r}
+# Fibonacci series is the sequence of the numbers in which each number in the sequence is equal to the sum of two numbers before it
+
+#Initialize/setting the first two entries of the Fibonacci series as we need to start it with 1, 1. 
+fibonacci <- numeric(12) #length of the 12
+fibonacci[1] <- 1
+fibonacci[2] <- 1
+
+# Calculating the remaining series upto the 12 entries of fibonacci series
+# creating a loop that starts from 3 and is upto 12
+# for each iteration, current element 'fibanacci[i]' is calculated by the formula
+for (i in 3:12) {
+    fibonacci[i] <- fibonacci[i - 1] + fibonacci[i - 2]
+}
+
+# Print out the first 12 entries of the Fibonacci series
+print(fibonacci)
+```
+#Task 3.4
+```{r}
+# Load the ggplot2 to print the plot
+library(ggplot2)
+
+# Load the data set "mtcars"
+data("mtcars")
+
+# Create the boxplot with ggplot using fill aesthetic
+# plot_3_4 is assigned so that it is easy to plot different plots in the different R chunks.
+# mpg is on the y-axis, gear is on the x-axis, and fill color is based on the gear
+
+plot_3_4 <- ggplot(mtcars, aes(x = factor(gear), y = mpg, fill = factor(gear))) +  
+    geom_boxplot() +
+    labs(x = "Number of Gears", y = "Miles Per Gallon (mpg)", title = "MPG Distribution by Gear") +
+    scale_fill_manual(values = c("3" = "red", "4" = "green", "5" = "blue"), name = "Gear") + # Manually setting up the colors for each gear
+    theme(legend.position = "right") +  # Positioning the legend on the right side
+    labs(fill = "Number of Gears")  # This is the Label for the legend
+
+print(plot_3_4)
+```
+
+#Task 3.5
+```{r}
+# Load the dataset
+data("cars")
+
+# View the first few rows of the dataset to understand its structure
+head(cars)
+
+# View the structure of the dataset
+str(cars)
+
+# Summarize the dataset to get basic statistics
+summary(cars)
+```
+
+#Task 3.5 
+```{r}
+# Load the cars dataset
+data("cars")
+
+# Fit the linear model to the data
+model <- lm(dist ~ speed, data = cars)
+
+# Print the summary of the linear model to extract slope, intercept, and their standard errors
+summary_model <- summary(model)
+print(summary_model)
+
+```
+
+#Task 3.6
+```{r}
+library(ggplot2)
+
+# Creating a ggplot scatter plot with blue data points and a red linear model fit
+# speed is on x-axis and breaking distance on y-axis
+plot_3_6 <- ggplot(cars, aes(x = speed, y = dist)) +
+    geom_point(color = "blue") +  # Setting the color of the data points to blue
+    geom_smooth(method = "lm", formula = y ~ x, se = FALSE, color = "red") +  # Setting the color of the line to red
+
+#labelling the plots with the title, and the axes as required with the units 
+    labs(title = "Speed vs Breaking Distance", 
+         x = "Speed (mph)", 
+         y = "Breaking Distance (ft)")
+
+print(plot_3_6)
+
+```
+#Task 3.7
+```{r}
+# Load the dataset
+data("cars")
+
+# Fit the linear model
+model <- lm(dist ~ speed + I(speed^2), data = cars)
+
+# Summary of the model to get coefficients and their standard errors
+summary_model <- summary(model)
+print(summary_model)
+
+# Load ggplot2 library
+library(ggplot2)
+
+# Create a ggplot scatter plot with blue data points and a red quadratic model fit
+# speed is on x-axis and distance on y-axis
+plot_3_7 <- ggplot(cars, aes(x = speed, y = dist)) +
+    geom_point(color = "blue") +  # Set the color of the data points to blue
+    geom_smooth(method = "lm", formula = y ~ x + I(x^2), se = FALSE, color = "red") +  # Set the color of the line to red and specify the model
+#labelling the plots with the title, and the axes as required with the units
+    labs(title = "Breaking Distance vs. Speed", 
+         x = "Speed (mph)", #
+         y = "Breaking Distance (ft)")
+print(plot_3_7)
+
+```
+
+#Task 3.8
+```{r}
+# Normalization in DESeq
+print("Differential Expression analysis: DESeq2")
+
+# Read input file with count data
+all_counts <- read.csv("LMS_RNAseq_short-master-2023-final/LMS_RNAseq_short-master-2023-final/course/exercises/data/all_counts.csv", row.names = 1)
+
+# Explore data
+head(all_counts)
+
+dim(all_counts)
+
+class(all_counts)
+```
+#Task 3.8
+```{r read-sample-description}
+sam_des_path <- "LMS_RNAseq_short-master-2023-final/LMS_RNAseq_short-master-2023-final/course/exercises/data/sample_description.txt"
+if (file.exists(sam_des_path)) {
+  sam_des <- read.table(sam_des_path, sep = "\t", header = TRUE)
+  print(head(sam_des))
+  print(dim(sam_des))
+  print(class(sam_des))
+} else {
+  stop("File not found: ", sam_des_path)
+}
+```
+
+
+#Task 3.9
+```{r}
+# Prepare data for DESeq
+col_data <- data.frame(Sample = sam_des$Sample,
+                  Group = sam_des$Group,
+                  Batch = sam_des$Batch)
+
+# Store data as factors
+col_data$Sample <- as.factor(col_data$Sample)
+col_data$Group <- as.factor(col_data$Group)
+col_data$Batch <- as.factor(col_data$Batch)
+
+# Check dimensions
+all(colnames(all_counts) == sam_des$Sample)
+```
+
+
+#Task 3.10
+```{r}
+# Load DESeq2 library
+library(DESeq2)
+
+# Build DESeq dataset
+dds <- DESeqDataSetFromMatrix(countData = all_counts, 
+                              colData = col_data, 
+                              design = ~Group)
+suppressPackageStartupMessages(library(DESeq2))
+```
+
+
+#Task 3.11
+```{r}
+# Regularized log transformation
+rld <- rlog(dds)
+class(rld)
+
+# Get rld in count format
+rld_counts <- assay(rld)
+class(rld_counts)
+
+# Regularized log transformation
+vsd <- varianceStabilizingTransformation(dds)
+class(vsd)
+
+# Get rld in count format
+vsd_counts <- assay(vsd)
+class(vsd_counts)
+```
+
+
+#Task 3.12
+```{r}
+# Load pheatmap library
+library("pheatmap")
+
+# Estimate size factors
+dds <- estimateSizeFactors(dds)
+
+# Get dds normalized counts
+dds_counts <- counts(dds, normalized = TRUE)
+head(dds_counts)
+
+# Get normalized counts - 40 higher values
+select <- order(rowMeans(dds_counts), decreasing = TRUE)[1:40]
+head(select)
+
+# Heatmap of the rlog transformed data
+pheatmap(assay(rld)[select, ])
+```
+
+```{r}
+# Heatmap of the vst transformed data
+pheatmap(assay(vsd)[select, ])
+```
+
+
+#Task 3.13
+```{r}
+# Sample Distance Matrix
+print("Sample Distance Matrix")
+
+# Compute SDM from rlog transformed data
+sample_dist <- dist(t(assay(rld)))
+class(sample_dist)
+
+# Get SDM in matrix form
+sdm <- as.matrix(sample_dist)
+class(sdm)
+
+# Load library
+library("RColorBrewer")
+
+# Add row names for clear plot
+rownames(sdm) <- rld$Group
+colnames(sdm) <- NULL
+
+# Add colors
+colors <- colorRampPalette(rev(brewer.pal(9, "Blues")))(255)
+
+# Plot heatmap
+pheatmap(sdm,
+         clustering_distance_rows = sample_dist,
+         clustering_distance_cols = sample_dist,
+         col = colors)
+```
+
+
+#Task 3.14
+```{r}
+# Principal Component Analysis
+print("Principal Component Analysis")
+
+library(DESeq2)
+library(ggplot2)
+
+# Performing PCA and extracting data
+pca_rlog <- plotPCA(rld, intgroup = "Group", returnData = TRUE)
+pca_rlog_result <- prcomp(t(assay(rld)))
+variance_rlog <- summary(pca_rlog_result)$importance[2, 1:2] * 100
+
+# Plotting
+pca_plot_rlog <- ggplot(pca_rlog, aes(x = PC1, y = PC2, color = Group)) +
+  geom_point() +
+  ggtitle("PCA - Rlog Method")
+print(pca_plot_rlog)
+print(paste("Variance explained by PC1:", round(variance_rlog[1], 2), "%"))
+print(paste("Variance explained by PC2:", round(variance_rlog[2], 2), "%"))
+```
+
+
+#Task 3.15
+```{r}
+# Performing PCA and extracting data
+pca_vst <- plotPCA(vsd, intgroup = "Group", returnData = TRUE)
+pca_vst_result <- prcomp(t(assay(vsd)))
+variance_vst <- summary(pca_vst_result)$importance[2, 1:2] * 100
+
+# Plotting
+pca_plot_vst <- ggplot(pca_vst, aes(x = PC1, y = PC2, color = Group)) +
+  geom_point() +
+  ggtitle("PCA - VST Method")
+print(pca_plot_vst)
+print(paste("Variance explained by PC1:", round(variance_vst[1], 2), "%"))
+print(paste("Variance explained by PC2:", round(variance_vst[2], 2), "%"))
+```
+
+#Task 3.16
+```{r}
+
+# Load the GenomicRanges Library .. 
+#suppress messages for a cleaner document
+suppressPackageStartupMessages(
+  library(GenomicRanges)
+  )
+
+file_path_1 <- "LMS_ChIPseq_short-master-2023-final/LMS_ChIPseq_short-master-2023-final/course/data/MacsPeaks/mycmelrep1_peaks.xls"
+file_path_2 <- "LMS_ChIPseq_short-master-2023-final/LMS_ChIPseq_short-master-2023-final/course/data/MacsPeaks/mycmelrep2_peaks.xls"
+
+if (file.exists(file_path_1) && file.exists(file_path_2)) {
+    melPeak_Rep1 <- read.delim(file_path_1, sep = "\t", comment.char = "#")
+    melPeak_Rep2 <- read.delim(file_path_2, sep = "\t", comment.char = "#")
+} else {
+    stop("Files not found. Check the file paths: ", file_path_1, " or ", file_path_2)
+}
+
+melRep1_GR <- GRanges(
+                  seqnames=melPeak_Rep1[,"chr"],
+                  IRanges(melPeak_Rep1[,"start"],
+                  melPeak_Rep1[,"end"]
+                  )
+                )
+
+mcols(melRep1_GR) <- melPeak_Rep1[,c("abs_summit", "fold_enrichment")]
+
+melRep1_GR
+
+```
+
+#Task 3.16
+```{r}
+melRep2_GR <- GRanges(
+                  seqnames=melPeak_Rep2[,"chr"],
+                  IRanges(melPeak_Rep2[,"start"],
+                  melPeak_Rep2[,"end"]
+                  )
+                )
+
+mcols(melRep2_GR) <- melPeak_Rep2[,c("abs_summit", "fold_enrichment")]
+
+melRep2_GR
+
+# Finding common peaks
+commonMelPeaks <- melRep1_GR[melRep1_GR %over% melRep2_GR]
+
+```
+# Task 3.17
+```{r}
+# Sort by fold enrichment and resize the peaks
+if(length(commonMelPeaks) >= 500) {
+    sortedPeaks <- commonMelPeaks[order(-mcols(commonMelPeaks)$fold_enrichment)]
+    top500Peaks <- head(sortedPeaks, 500)
+    resizedPeaks <- resize(top500Peaks, width = 200, fix = "center")
+    print(head(resizedPeaks))
+} else {
+    stop("Not enough peaks to select the top 500.")
+}
+```
+#Task 3.18
+
+```{r}
+# Load Required Libraries
+library(BSgenome)
+library(BSgenome.Mmusculus.UCSC.mm9)
+genome <- BSgenome.Mmusculus.UCSC.mm9
+seqlevelsStyle(resizedPeaks) <- "UCSC"
+
+commonPeaksSequences <- getSeq(genome, GRanges(resizedPeaks))
+names(commonPeaksSequences) <- paste0("peak_", seqnames(resizedPeaks), "_", start(resizedPeaks), "-", end(resizedPeaks))
+
+# Writing to FASTA
+fasta_path <- "C:/Users/admin00/Downloads/LMS_ChIPseq_short-master-2023-final/LMS_ChIPseq_short-master-2023-final/course/consensusPeaks.fa"
+writeXStringSet(commonPeaksSequences, file=fasta_path)
+
+# Printing the first two entries for checking
+print(commonPeaksSequences[1:2])
+```
+
