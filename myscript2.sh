@@ -103,3 +103,19 @@ cd ~/
 # ~/tools/annovar/table_annovar.pl $workdir/results/NGS0001_filtered_in_bedfile.avinput ~/tools/annovar/humandb/ -buildver hg19 \
 #   -out $workdir/results/NGS0001_filtered_in_bedfile -remove \
 #   -protocol refGene,ensGene,clinvar_20180603,exac03,dbnsfp31a_interpro,snp138 -operation g,g,f,f,f,f -otherinfo -nastring . -csvout
+
+
+                # SnpEff setup and annotation
+
+mkdir -p ~/snpEff
+cd ~/snpEff
+if [ ! -f snpEff_latest_core.zip ]; then
+    wget https://snpeff.blob.core.windows.net/versions/snpEff_latest_core.zip
+fi
+unzip snpEff_latest_core.zip
+
+                # Download the required genome data
+java -Xmx4g -jar snpEff.jar download hg19
+
+                # Run SnpEff
+java -Xmx4g -jar snpEff.jar hg19 ~/bioinformatics_assignment/results/NGS0001.vcf.gz > ~/bioinformatics_assignment/results/NGS0001_snpEff.vcf
