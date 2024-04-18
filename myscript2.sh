@@ -28,7 +28,7 @@ bgzip ~/bioinformatics_assignment/results/NGS0001.vcf
 
 tabix -p vcf ~/bioinformatics_assignment/results/NGS0001.vcf.gz
 
-                # Filtering the VCF
+                # Filtering the VCF using Freebayes
 
 conda install vcflib #if you did not install vcflib before. vcffilter is part of the vcflib suite
 
